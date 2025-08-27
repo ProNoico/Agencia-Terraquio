@@ -1,0 +1,182 @@
+/* Agencia/css/style.css (Refactorizado) */
+
+/* --- 1. ESTILOS BASE (MOBILE-FIRST) --- */
+/* Estos estilos se aplican a TODOS los tamaños de pantalla, comenzando por el móvil. */
+
+body {
+    font-family: 'Muli', sans-serif;
+    background-color: #FFFFFF;
+    overflow-x: hidden;
+    padding-top: 72px; /* Espacio para el header en móviles (h-16) */
+}
+
+/* Clases de la marca */
+.bg-brand-dark-blue { background-color: #033E4C; }
+.text-brand-dark-blue { color: #033E4C; }
+.border-brand-dark-blue { border-color: #033E4C; }
+.bg-brand-light-teal { background-color: #A4D4CC; }
+.text-brand-light-teal { color: #A4D4CC; }
+.border-brand-light-teal { border-color: #A4D4CC; }
+.bg-brand-beige { background-color: #DACCBF; }
+.bg-brand-neutral { background-color: #E8E0D8; }
+
+/* Botones */
+.btn-teal {
+    background-color: #A4D4CC;
+    color: #033E4C;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.btn-teal:hover {
+    background-color: #033E4C;
+    color: #A4D4CC;
+}
+
+.header-actions .btn-teal {
+     padding: 6px 12px;
+     font-size: 12px;
+}
+
+/* --- 2. COMPONENTES (MOBILE-FIRST) --- */
+
+/* Hero Section */
+.hero-container {
+    position: relative;
+    width: 100%;
+    height: 60vh; /* Altura para móviles */
+    overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(3, 62, 76, 0.3);
+    z-index: 2;
+}
+
+.hero-shape {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 3;
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+}
+
+.hero-text-container {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    text-align: center;
+    color: white;
+    width: 90%;
+}
+
+/* Tarjetas de Paquetes */
+.card-paquete {
+    background-color: #374151;
+}
+
+.card-paquete-grupales .card-footer {
+    background-color: #A4D4CC;
+}
+
+.card-paquete-grupales .card-footer h3 {
+    color: #033E4C;
+}
+
+/* Carrusel de Operadores */
+.scroller {
+    overflow: hidden;
+    -webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+    mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+}
+
+.scroller__inner {
+    display: flex;
+    flex-wrap: nowrap;
+    width: max-content;
+    animation: scroll 60s linear infinite;
+}
+
+.scroller:hover .scroller__inner {
+    animation-play-state: paused;
+}
+
+@keyframes scroll {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* Botón flotante de WhatsApp */
+.whatsapp-float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 30px;
+    right: 30px;
+    background-color: #25D366;
+    color: #FFF;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+}
+
+/* Ajuste para anclaje de secciones con header fijo */
+section[id] {
+  scroll-margin-top: 100px;
+}
+
+/* --- 3. ESTILOS RESPONSIVE (min-width) --- */
+/* Se aplican DESDE el breakpoint especificado HACIA ARRIBA */
+
+/* Medium screens (tablets) y superiores (a partir de 768px) */
+@media (min-width: 768px) {
+    body {
+        padding-top: 88px; /* Ajusta para el header más grande en pantallas md (md:h-20) */
+    }
+
+    .hero-container {
+        height: 75vh; /* Altura del hero para pantallas más grandes */
+    }
+}
+
+/* Large screens (laptops) y superiores (a partir de 1024px) */
+@media (min-width: 1024px) {
+    /* Si tuvieras estilos específicos para pantallas grandes, irían aquí.
+       Por ejemplo:
+       .alguna-clase {
+           font-size: 1.25rem;
+       }
+    */
+}

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Hero - Terraquio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .modal-backdrop { transition: opacity 0.3s ease; }
+        .drop-zone.drag-over { border-color: #3b82f6; background-color: #eff6ff; }
+    </style>
+</head>
+<body class="h-full">
+    <div class="min-h-full">
+        <header class="bg-white shadow-sm">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-gray-900 py-6">Gestión del Slider Principal (Hero)</h1>
+                    <a href="dashboard.html" class="text-sm text-indigo-600 hover:text-indigo-900">&larr; Volver al panel principal</a>
+                </div>
+                <button id="logout-button" class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500">Cerrar Sesión</button>
+            </div>
+        </header>
+
+        <main class="py-10">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="sm:flex sm:items-center">
+                    <div class="sm:flex-auto">
+                        <h2 class="text-base font-semibold leading-6 text-gray-900">Slides</h2>
+                        <p class="mt-2 text-sm text-gray-700">Gestiona las imágenes, videos y textos que aparecen en la sección principal de la página de inicio.</p>
+                    </div>
+                    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                        <button type="button" id="add-slide-button" class="block rounded-md bg-[#033E4C] px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-opacity-90">Crear Slide</button>
+                    </div>
+                </div>
+                <div class="mt-8 flow-root">
+                    <div class="inline-block min-w-full py-2 align-middle">
+                        <table class="min-w-full divide-y divide-gray-300">
+                            <thead>
+                                <tr>
+                                    <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Orden</th>
+                                    <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Media</th>
+                                    <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Texto Principal</th>
+                                    <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Activo</th>
+                                    <th class="relative py-3.5 pl-3 pr-4"><span class="sr-only">Acciones</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="slides-table-body" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="slide-modal" class="relative z-10 hidden" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 modal-backdrop"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                    <form id="slide-form">
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <h3 class="text-lg font-semibold leading-6 text-gray-900" id="slide-modal-title">Crear Slide</h3>
+                            <div class="mt-4 grid grid-cols-1 gap-y-6">
+                                <input type="hidden" id="slide-id" name="id">
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Imagen o Video</label>
+                                    <div id="drop-zone" class="drop-zone mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-10 cursor-pointer">
+                                        <div class="text-center">
+                                            <p class="mt-1 text-sm text-gray-600">Arrastra un archivo o <span class="font-semibold text-indigo-600">haz clic</span></p>
+                                            <input id="file-input" type="file" class="sr-only" accept="image/*,video/*">
+                                        </div>
+                                    </div>
+                                    <p id="upload-status" class="mt-2 text-sm text-gray-500"></p>
+                                    <div id="media-preview-container" class="mt-4 hidden"></div>
+                                </div>
+
+                                <div>
+                                    <label for="media_url" class="block text-sm font-medium text-gray-700">URL del Archivo</label>
+                                    <input type="url" name="media_url" id="media_url" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm px-3 py-2 border">
+                                </div>
+                                
+                                <input type="hidden" id="media_type" name="media_type" value="image">
+
+                                <div>
+                                    <label for="texto_principal" class="block text-sm font-medium text-gray-700">Texto Principal</label>
+                                    <input type="text" name="texto_principal" id="texto_principal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm px-3 py-2 border" placeholder="Ej: CUMPLIENDO SUEÑOS">
+                                </div>
+                                <div>
+                                    <label for="texto_secundario" class="block text-sm font-medium text-gray-700">Texto Secundario</label>
+                                    <input type="text" name="texto_secundario" id="texto_secundario" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm px-3 py-2 border" placeholder="Ej: Desde 2008">
+                                </div>
+                                <div>
+                                    <label for="orden" class="block text-sm font-medium text-gray-700">Orden</label>
+                                    <input type="number" name="orden" id="orden" value="0" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm px-3 py-2 border">
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="activo" name="activo" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600">
+                                    <label for="activo" class="ml-3 block text-sm font-medium text-gray-900">Activo</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                            <button type="submit" class="inline-flex w-full justify-center rounded-md bg-[#033E4C] px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto">Guardar</button>
+                            <button type="button" id="cancel-slide-button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm sm:mt-0 sm:w-auto ring-1 ring-inset ring-gray-300">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const SUPABASE_URL = 'https://rwndahfhxxasuwycfjug.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3bmRhaGZoeHhhc3V3eWNmanVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMzA3MjUsImV4cCI6MjA2ODYwNjcyNX0.gZCP_LDl_WDqnhIIDHdqa-kWsDkYpxJ6RQxZcPtC0ZQ';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const SLIDER_TABLE = 'hero_slider';
+
+    // --- Elementos del DOM ---
+    const logoutButton = document.getElementById('logout-button');
+    const slidesTableBody = document.getElementById('slides-table-body');
+    const addSlideButton = document.getElementById('add-slide-button');
+    const slideModal = document.getElementById('slide-modal');
+    const slideForm = document.getElementById('slide-form');
+    const cancelSlideButton = document.getElementById('cancel-slide-button');
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const uploadStatus = document.getElementById('upload-status');
+    const mediaPreviewContainer = document.getElementById('media-preview-container');
+    let slidesData = [];
+
+    // --- Auth ---
+    const checkAdmin = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) { window.location.href = './index.html'; return; }
+    };
+
+    // --- CRUD ---
+    const fetchSlides = async () => {
+        const { data, error } = await supabase.from(SLIDER_TABLE).select('*').order('orden', { ascending: true });
+        if (error) { console.error('Error al cargar slides:', error); return; }
+        slidesData = data;
+        renderSlidesTable();
+    };
+
+    const renderSlidesTable = () => {
+        slidesTableBody.innerHTML = slidesData.map(slide => `
+            <tr>
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">${slide.orden}</td>
+                <td class="px-3 py-4">
+                    ${slide.media_type === 'video' 
+                        ? `<video src="${slide.media_url}" class="h-12 w-24 object-cover rounded" autoplay muted loop></video>`
+                        : `<img src="${slide.media_url}" class="h-12 w-24 object-cover rounded">`
+                    }
+                </td>
+                <td class="px-3 py-4 text-sm text-gray-500">${slide.texto_principal}</td>
+                <td class="px-3 py-4 text-sm text-gray-500">${slide.activo ? 'Sí' : 'No'}</td>
+                <td class="relative py-4 pl-3 pr-4 text-right text-sm font-medium">
+                    <button data-id="${slide.id}" class="text-indigo-600 hover:text-indigo-900 edit-slide-btn">Editar</button>
+                    <button data-id="${slide.id}" class="text-red-600 hover:text-red-900 ml-4 delete-slide-btn">Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+    };
+
+    const handleFileUpload = async (file) => {
+        if (!file) return;
+        uploadStatus.textContent = 'Subiendo...';
+        const fileType = file.type.startsWith('video/') ? 'video' : 'image';
+        document.getElementById('media_type').value = fileType;
+
+        const filePath = `hero/${Date.now()}-${file.name}`;
+        const { error } = await supabase.storage.from('imagenes-web').upload(filePath, file);
+        if (error) { uploadStatus.textContent = 'Error: ' + error.message; return; }
+        
+        const { data } = supabase.storage.from('imagenes-web').getPublicUrl(filePath);
+        uploadStatus.textContent = '¡Archivo subido!';
+        document.getElementById('media_url').value = data.publicUrl;
+        
+        mediaPreviewContainer.classList.remove('hidden');
+        if (fileType === 'video') {
+            mediaPreviewContainer.innerHTML = `<video src="${data.publicUrl}" class="rounded-lg max-h-40" autoplay muted loop></video>`;
+        } else {
+            mediaPreviewContainer.innerHTML = `<img src="${data.publicUrl}" class="rounded-lg max-h-40">`;
+        }
+    };
+
+    // --- Listeners ---
+    addSlideButton.addEventListener('click', () => {
+        slideForm.reset();
+        mediaPreviewContainer.classList.add('hidden');
+        mediaPreviewContainer.innerHTML = '';
+        uploadStatus.textContent = '';
+        document.getElementById('slide-id').value = '';
+        document.getElementById('slide-modal-title').textContent = 'Crear Slide';
+        document.getElementById('activo').checked = true;
+        slideModal.classList.remove('hidden');
+    });
+
+    cancelSlideButton.addEventListener('click', () => slideModal.classList.add('hidden'));
+
+    slideForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(slideForm);
+        const slideData = {
+            media_url: formData.get('media_url'),
+            media_type: formData.get('media_type'),
+            texto_principal: formData.get('texto_principal'),
+            texto_secundario: formData.get('texto_secundario'),
+            orden: formData.get('orden'),
+            activo: formData.get('activo') === 'on'
+        };
+        const slideId = formData.get('id');
+
+        if (slideId) {
+            await supabase.from(SLIDER_TABLE).update(slideData).eq('id', slideId);
+        } else {
+            await supabase.from(SLIDER_TABLE).insert([slideData]);
+        }
+        slideModal.classList.add('hidden');
+        fetchSlides();
+    });
+
+    slidesTableBody.addEventListener('click', (e) => {
+        const id = e.target.dataset.id;
+        if (!id) return;
+        const slide = slidesData.find(s => s.id == id);
+        if (!slide) return;
+
+        if (e.target.classList.contains('edit-slide-btn')) {
+            slideForm.elements.id.value = slide.id;
+            slideForm.elements.media_url.value = slide.media_url;
+            slideForm.elements.media_type.value = slide.media_type;
+            slideForm.elements.texto_principal.value = slide.texto_principal;
+            slideForm.elements.texto_secundario.value = slide.texto_secundario;
+            slideForm.elements.orden.value = slide.orden;
+            slideForm.elements.activo.checked = slide.activo;
+            
+            mediaPreviewContainer.classList.remove('hidden');
+            if (slide.media_type === 'video') {
+                 mediaPreviewContainer.innerHTML = `<video src="${slide.media_url}" class="rounded-lg max-h-40" autoplay muted loop></video>`;
+            } else {
+                 mediaPreviewContainer.innerHTML = `<img src="${slide.media_url}" class="rounded-lg max-h-40">`;
+            }
+
+            document.getElementById('slide-modal-title').textContent = 'Editar Slide';
+            slideModal.classList.remove('hidden');
+        }
+        if (e.target.classList.contains('delete-slide-btn')) {
+            if (confirm('¿Seguro que quieres eliminar este slide?')) {
+                supabase.from(SLIDER_TABLE).delete().eq('id', id).then(() => fetchSlides());
+            }
+        }
+    });
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => handleFileUpload(e.target.files[0]));
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', (e) => e.currentTarget.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', (e) => { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); if(e.dataTransfer.files[0]) handleFileUpload(e.dataTransfer.files[0]); });
+    logoutButton.addEventListener('click', async () => { await supabase.auth.signOut(); window.location.href = './index.html'; });
+
+    // --- Inicialización ---
+    document.addEventListener('DOMContentLoaded', async () => {
+        await checkAdmin();
+        fetchSlides();
+    });
+    </script>
+</body>
+</html>
