@@ -9,7 +9,7 @@ import { cargarEventos } from './modules/eventos.js';
 import { setupSearch, performSearch } from './modules/search.js';
 import { loadNosotrosPage } from './modules/nosotros.js';
 import { loadRegionPackages } from './modules/paquetesDestino.js';
-import { loadHeroSection } from './modules/hero.js'; // <-- 1. IMPORTAMOS LA NUEVA FUNCIÓN
+import { loadHeroSection } from './modules/hero.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Lógica que se ejecuta en TODAS las páginas
@@ -18,13 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const pathname = window.location.pathname;
 
+    // Helper para detectar la página actual de forma robusta
+    const onPage = (page) => pathname.endsWith(`/${page}.html`) || pathname.endsWith(`/${page}`) || (page === 'index' && (pathname === '/' || pathname.endsWith('/index.html')));
+
     // Lógica para la página de INICIO
-    if (pathname.includes('index.html') || pathname === '/' || pathname.endsWith('/Agencia/')) {
+    if (onPage('index') || pathname.endsWith('/Agencia/')) {
         const destacadosContainer = document.getElementById('destacados-container');
         const grupalesContainer = document.getElementById('grupales-container');
         const packageLimit = window.innerWidth < 768 ? 4 : 8;
 
-        loadHeroSection(); // <-- 2. LLAMAMOS A LA NUEVA FUNCIÓN AQUÍ
+        loadHeroSection();
         cargarPaquetesDestacados(destacadosContainer, packageLimit);
         cargarPaquetesGrupales(grupalesContainer, packageLimit);
         loadGroupBanners();
@@ -45,33 +48,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Lógica para la página de "Todos los Destacados"
-    if (pathname.includes('destacados.html')) {
+    if (onPage('destacados')) {
         const allDestacadosContainer = document.getElementById('all-destacados-container');
         cargarPaquetesDestacados(allDestacadosContainer);
     }
 
     // Lógica para la página de "Todas las Salidas Grupales"
-    if (pathname.includes('grupales.html')) {
+    if (onPage('grupales')) {
         const allGrupalesContainer = document.getElementById('all-grupales-container');
         cargarPaquetesGrupales(allGrupalesContainer);
     }
 
     // Lógica para la página de "Quinceañeras"
-    if (pathname.includes('quinceaneras.html')) {
+    if (onPage('quinceaneras')) {
         const programasContainer = document.getElementById('programas-quince-grid');
         cargarProgramasQuinceaneras(programasContainer);
     }
 
     // Lógica para páginas específicas
-    if (pathname.includes('nosotros.html')) {
+    if (onPage('nosotros')) {
         loadNosotrosPage();
     }
     
-    if (pathname.includes('search-results.html')) {
+    if (onPage('search-results')) {
         performSearch();
     }
 
-    if (pathname.includes('paquetes-destino.html')) {
+    if (onPage('paquetes-destino')) {
         loadRegionPackages();
     }
 });
