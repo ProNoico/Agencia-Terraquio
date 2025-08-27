@@ -2,7 +2,7 @@
 
 /* --- 1. ESTILOS BASE (MOBILE-FIRST) --- */
 html, body {
-    overflow-x: clip;
+    overflow-x: clip; 
 }
 
 body {
@@ -52,10 +52,22 @@ body {
     z-index: 2;
 }
 
-.hero-shape,
+/* INICIO DE LA CORRECCIÓN: Se separaron las reglas de estilo */
+.hero-shape {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 3;
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+}
+
 .quinces-section-shape {
     clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
 }
+/* FIN DE LA CORRECCIÓN */
 
 .hero-text-container {
     position: absolute;
@@ -146,13 +158,12 @@ section[id] {
 }
 
 /* --- 4. CORRECCIONES ESPECÍFICAS PARA MÓVILES --- */
-/* Esta nueva regla arregla el desfase en la sección de Quinceañeras */
 @media (max-width: 767px) {
     #quinceaneras .grid {
-        display: block; /* Desactiva el grid en móviles para que los elementos se apilen */
+        display: block; 
     }
 
     #quinceaneras .relative.w-full {
-        margin-top: 2rem; /* Añade un espacio entre el texto y el slider cuando se apilan */
+        margin-top: 2rem; 
     }
 }
