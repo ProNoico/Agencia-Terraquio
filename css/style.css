@@ -3,10 +3,13 @@
 /* --- 1. ESTILOS BASE (MOBILE-FIRST) --- */
 /* Estos estilos se aplican a TODOS los tamaños de pantalla, comenzando por el móvil. */
 
+html, body {
+    overflow-x: clip; /* <-- CORRECCIÓN: Evita el scroll horizontal en toda la página */
+}
+
 body {
     font-family: 'Muli', sans-serif;
     background-color: #FFFFFF;
-    overflow-x: hidden;
     padding-top: 72px; /* Espacio para el header en móviles (h-16) */
 }
 
@@ -77,6 +80,11 @@ body {
     height: 100%;
     background: transparent;
     z-index: 3;
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+}
+
+/* CORRECCIÓN: Estilo para la sección de Quinceañeras */
+.quinces-section-shape {
     clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
 }
 
