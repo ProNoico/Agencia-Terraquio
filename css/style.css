@@ -1,16 +1,14 @@
 /* Agencia/css/style.css (Refactorizado) */
 
 /* --- 1. ESTILOS BASE (MOBILE-FIRST) --- */
-/* Estos estilos se aplican a TODOS los tamaños de pantalla, comenzando por el móvil. */
-
 html, body {
-    overflow-x: clip; /* <-- CORRECCIÓN: Evita el scroll horizontal en toda la página */
+    overflow-x: clip;
 }
 
 body {
     font-family: 'Muli', sans-serif;
     background-color: #FFFFFF;
-    padding-top: 72px; /* Espacio para el header en móviles (h-16) */
+    padding-top: 72px;
 }
 
 /* Clases de la marca */
@@ -23,31 +21,13 @@ body {
 .bg-brand-beige { background-color: #DACCBF; }
 .bg-brand-neutral { background-color: #E8E0D8; }
 
-/* Botones */
-.btn-teal {
-    background-color: #A4D4CC;
-    color: #033E4C;
-    font-weight: 700;
-    transition: all 0.3s ease;
-}
-
-.btn-teal:hover {
-    background-color: #033E4C;
-    color: #A4D4CC;
-}
-
-.header-actions .btn-teal {
-     padding: 6px 12px;
-     font-size: 12px;
-}
-
 /* --- 2. COMPONENTES (MOBILE-FIRST) --- */
 
 /* Hero Section */
 .hero-container {
     position: relative;
     width: 100%;
-    height: 60vh; /* Altura para móviles */
+    height: 60vh;
     overflow: hidden;
 }
 
@@ -72,18 +52,7 @@ body {
     z-index: 2;
 }
 
-.hero-shape {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    z-index: 3;
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
-}
-
-/* CORRECCIÓN: Estilo para la sección de Quinceañeras */
+.hero-shape,
 .quinces-section-shape {
     clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
 }
@@ -166,25 +135,24 @@ section[id] {
 }
 
 /* --- 3. ESTILOS RESPONSIVE (min-width) --- */
-/* Se aplican DESDE el breakpoint especificado HACIA ARRIBA */
-
-/* Medium screens (tablets) y superiores (a partir de 768px) */
 @media (min-width: 768px) {
     body {
-        padding-top: 88px; /* Ajusta para el header más grande en pantallas md (md:h-20) */
+        padding-top: 88px;
     }
 
     .hero-container {
-        height: 75vh; /* Altura del hero para pantallas más grandes */
+        height: 75vh;
     }
 }
 
-/* Large screens (laptops) y superiores (a partir de 1024px) */
-@media (min-width: 1024px) {
-    /* Si tuvieras estilos específicos para pantallas grandes, irían aquí.
-       Por ejemplo:
-       .alguna-clase {
-           font-size: 1.25rem;
-       }
-    */
+/* --- 4. CORRECCIONES ESPECÍFICAS PARA MÓVILES --- */
+/* Esta nueva regla arregla el desfase en la sección de Quinceañeras */
+@media (max-width: 767px) {
+    #quinceaneras .grid {
+        display: block; /* Desactiva el grid en móviles para que los elementos se apilen */
+    }
+
+    #quinceaneras .relative.w-full {
+        margin-top: 2rem; /* Añade un espacio entre el texto y el slider cuando se apilan */
+    }
 }
